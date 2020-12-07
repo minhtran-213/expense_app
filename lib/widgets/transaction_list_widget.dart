@@ -11,7 +11,7 @@ class TransactionsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 300,
+      height: 700,
       child: transactions.isEmpty
           ? Column(
               children: <Widget>[
@@ -38,8 +38,11 @@ class TransactionsList extends StatelessWidget {
                       radius: 30,
                       child: Padding(
                         padding: EdgeInsets.all(6),
-                        child: FittedBox(
-                            child: Text("\$${transactions[index].amount}")),
+                        child: Container(
+                          height: 20,
+                          child: FittedBox(
+                              child: Text("\$${transactions[index].amount}")),
+                        ),
                       ),
                     ),
                     title: Text(

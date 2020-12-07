@@ -8,7 +8,9 @@ import 'chart_bar.dart';
 
 class Chart extends StatelessWidget {
   final List<Transaction> recentTransaction;
+
   Chart(this.recentTransaction);
+
   List<Map<String, Object>> get groupedTransactionValues {
     return List.generate(
       7,
@@ -32,7 +34,7 @@ class Chart extends StatelessWidget {
           'amount': totalSum,
         };
       },
-    );
+    ).reversed.toList();
   }
 
   double get totalSpending {
@@ -43,7 +45,7 @@ class Chart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card( 
+    return Card(
       elevation: 6,
       margin: EdgeInsets.all(20),
       child: Padding(
