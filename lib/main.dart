@@ -53,10 +53,15 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> _transaction_list = [];
   List<Transaction> get _recentTransactions {
-    return _transaction_list.where((transaction) {
-      return transaction.date
-          .isAfter(DateTime.now().subtract(Duration(days: 7)));
-    }).toList();
+    return _transaction_list.where(
+      (transaction) {
+        return transaction.date.isAfter(
+          DateTime.now().subtract(
+            Duration(days: 7),
+          ),
+        );
+      },
+    ).toList();
   }
 
   void _addNewTransaction(String title, double amount, DateTime chosenDate) {
@@ -67,9 +72,11 @@ class _MyHomePageState extends State<MyHomePage> {
       id: DateTime.now().toString(),
     );
 
-    setState(() {
-      _transaction_list.add(newTransaction);
-    });
+    setState(
+      () {
+        _transaction_list.add(newTransaction);
+      },
+    );
   }
 
   void _deleteTransaction(String id) {
@@ -80,38 +87,51 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _startAddNewTransaction(BuildContext context) {
     showModalBottomSheet(
-        context: context,
-        builder: (_) {
-          return GestureDetector(
-            onTap: () {},
-            child: NewTransaction(_addNewTransaction),
-            behavior: HitTestBehavior.opaque,
-          );
-        });
+      context: context,
+      builder: (_) {
+        return GestureDetector(
+          onTap: () {},
+          child: NewTransaction(_addNewTransaction),
+          behavior: HitTestBehavior.opaque,
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Flutter App'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.add,
-              color: Colors.white,
-            ),
-            onPressed: () => _startAddNewTransaction(context),
+    var appBar2 = AppBar(
+      title: Text('Flutter App'),
+      actions: <Widget>[
+        IconButton(
+          icon: Icon(
+            Icons.add,
+            color: Colors.white,
           ),
-        ],
-      ),
+          onPressed: () => _startAddNewTransaction(context),
+        ),
+      ],
+    );
+    return Scaffold(
+      appBar: appBar2,
       body: SingleChildScrollView(
         child: Column(
           //mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Chart(_transaction_list),
-            TransactionsList(_recentTransactions, _deleteTransaction),
+            Container(
+                height: (MediaQuery.of(context).size.height -
+                        appBar2.preferredSize.height -
+                        MediaQuery.of(context).padding.top) *
+                    0.5,
+                child: Chart(_transaction_list)),
+            Container(
+                height: (MediaQuery.of(context).size.height -
+                        appBar2.preferredSize.height -
+                        MediaQuery.of(context).padding.top) *
+                    0.5,
+                child:
+                    TransactionsList(_recentTransactions, _deleteTransaction)),
           ],
         ),
       ),
