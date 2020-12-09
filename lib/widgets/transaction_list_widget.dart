@@ -36,11 +36,20 @@ class TransactionsList extends StatelessWidget {
               return Card(
                 margin: EdgeInsets.symmetric(vertical: 8, horizontal: 10),
                 child: ListTile(
-                  trailing: IconButton(
-                    icon: Icon(Icons.delete),
-                    color: Theme.of(context).errorColor,
-                    onPressed: () => removeTransactions(transactions[index].id),
-                  ),
+                  trailing: MediaQuery.of(context).size.width > 460
+                      ? FlatButton.icon(
+                          icon: Icon(Icons.delete),
+                          label: Text('Delete'),
+                          textColor: Theme.of(context).errorColor,
+                          onPressed: () =>
+                              removeTransactions(transactions[index].id),
+                        )
+                      : IconButton(
+                          icon: Icon(Icons.delete),
+                          color: Theme.of(context).errorColor,
+                          onPressed: () =>
+                              removeTransactions(transactions[index].id),
+                        ),
                   leading: CircleAvatar(
                     radius: 30,
                     child: Padding(

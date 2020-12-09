@@ -1,7 +1,8 @@
 import 'package:expenses_transaction_app/widgets/chart.dart';
 import 'package:expenses_transaction_app/widgets/new_transaction.dart';
 import 'package:expenses_transaction_app/widgets/transaction_list_widget.dart';
-
+import 'package:flutter/cupertino.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
 
 import 'models/transaction.dart';
@@ -106,70 +107,96 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final _isLanscape =
-        MediaQuery.of(context).orientation == Orientation.landscape;
-    var appBar2 = AppBar(
-      title: Text('Flutter App'),
-      actions: <Widget>[
-        IconButton(
-          icon: Icon(
-            Icons.add,
-            color: Colors.white,
-          ),
-          onPressed: () => _startAddNewTransaction(context),
-        ),
-      ],
-    );
+    final mediaQuery = MediaQuery.of(context);
+    final _isLanscape = mediaQuery.orientation == Orientation.landscape;
+    final PreferredSizeWidget appBar2 = Platform.isIOS
+        ? CupertinoNavigationBar(
+            middle: Text('Personal Expenese'),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                GestureDetector(
+                  child: Icon(CupertinoIcons.add),
+                  onTap: () => _startAddNewTransaction(context),
+                ),
+              ],
+            ),
+          )
+        : AppBar(
+            title: Text('Flutter App'),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(
+                  Icons.add,
+                  color: Colors.white,
+                ),
+                onPressed: () => _startAddNewTransaction(context),
+              ),
+            ],
+          );
     var txList = Container(
-        height: (MediaQuery.of(context).size.height -
+        height: (mediaQuery.size.height -
                 appBar2.preferredSize.height -
-                MediaQuery.of(context).padding.top) *
+                mediaQuery.padding.top) *
             0.7,
         child: TransactionsList(_recentTransactions, _deleteTransaction));
-    return Scaffold(
-      appBar: appBar2,
-      body: SingleChildScrollView(
-        child: Column(
-          //mainAxisAlignment: MainAxisAlignment.spaceAround,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            if (_isLanscape)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text('Show Chart'),
-                  Switch(
-                      value: _showChart,
-                      onChanged: (val) {
-                        setState(() {
-                          _showChart = val;
-                        });
-                      }),
-                ],
-              ),
-            if (!_isLanscape)
-              Container(
-                  height: (MediaQuery.of(context).size.height -
-                          appBar2.preferredSize.height -
-                          MediaQuery.of(context).padding.top) *
-                      0.3,
-                  child: Chart(_transaction_list)),
-            if (!_isLanscape) txList,
-            if (_isLanscape)
-              _showChart
-                  ? Container(
-                      height: (MediaQuery.of(context).size.height -
-                          appBar2.preferredSize.height -
-                          MediaQuery.of(context).padding.top),
-                      child: Chart(_transaction_list))
-                  : txList,
-          ],
-        ),
+
+    var body = SafeArea(
+        child: SingleChildScrollView(
+      child: Column(
+        //mainAxisAlignment: MainAxisAlignment.spaceAround,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          if (_isLanscape)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'Show Chart',
+                  style: Theme.of(context).textTheme.title,
+                ),
+                Switch.adaptive(
+                    value: _showChart,
+                    onChanged: (val) {
+                      setState(() {
+                        _showChart = val;
+                      });
+                    }),
+              ],
+            ),
+          if (!_isLanscape)
+            Container(
+                height: (mediaQuery.size.height -
+                        appBar2.preferredSize.height -
+                        mediaQuery.padding.top) *
+                    0.3,
+                child: Chart(_transaction_list)),
+          if (!_isLanscape) txList,
+          if (_isLanscape)
+            _showChart
+                ? Container(
+                    height: (mediaQuery.size.height -
+                        appBar2.preferredSize.height -
+                        mediaQuery.padding.top),
+                    child: Chart(_transaction_list))
+                : txList,
+        ],
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () => _startAddNewTransaction(context),
-      ),
-    );
+    ));
+    return Platform.isIOS
+        ? CupertinoPageScaffold(
+            child: body,
+            navigationBar: appBar2,
+          )
+        : Scaffold(
+            appBar: appBar2,
+            body: body,
+            floatingActionButton: Platform.isIOS
+                ? Container()
+                : FloatingActionButton(
+                    child: Icon(Icons.add),
+                    onPressed: () => _startAddNewTransaction(context),
+                  ),
+          );
   }
 }
