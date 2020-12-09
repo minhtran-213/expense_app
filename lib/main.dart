@@ -92,6 +92,53 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  List<Widget> _buildLandscapeContent(
+      MediaQueryData mediaQuery, AppBar appBar2, Widget txList) {
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            'Show Chart',
+            style: Theme.of(context).textTheme.title,
+          ),
+          Switch.adaptive(
+            activeColor: Theme.of(context).accentColor,
+            value: _showChart,
+            onChanged: (val) {
+              setState(() {
+                _showChart = val;
+              });
+            },
+          ),
+        ],
+      ),
+      _showChart
+          ? Container(
+              height: (mediaQuery.size.height -
+                      appBar2.preferredSize.height -
+                      mediaQuery.padding.top) *
+                  0.7,
+              child: Chart(_recentTransactions),
+            )
+          : txList
+    ];
+  }
+
+  List<Widget> _buildPortraitContent(
+      MediaQueryData mediaQuery, AppBar appBar2, Widget txList) {
+    return [
+      Container(
+        height: (mediaQuery.size.height -
+                appBar2.preferredSize.height -
+                mediaQuery.padding.top) *
+            0.3,
+        child: Chart(_transaction_list),
+      ),
+      txList
+    ];
+  }
+
   void _startAddNewTransaction(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -135,54 +182,27 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           );
     var txList = Container(
-        height: (mediaQuery.size.height -
-                appBar2.preferredSize.height -
-                mediaQuery.padding.top) *
-            0.7,
-        child: TransactionsList(_recentTransactions, _deleteTransaction));
+      height: (mediaQuery.size.height -
+              appBar2.preferredSize.height -
+              mediaQuery.padding.top) *
+          0.7,
+      child: TransactionsList(_recentTransactions, _deleteTransaction),
+    );
 
     var body = SafeArea(
-        child: SingleChildScrollView(
-      child: Column(
-        //mainAxisAlignment: MainAxisAlignment.spaceAround,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          if (_isLanscape)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  'Show Chart',
-                  style: Theme.of(context).textTheme.title,
-                ),
-                Switch.adaptive(
-                    value: _showChart,
-                    onChanged: (val) {
-                      setState(() {
-                        _showChart = val;
-                      });
-                    }),
-              ],
-            ),
-          if (!_isLanscape)
-            Container(
-                height: (mediaQuery.size.height -
-                        appBar2.preferredSize.height -
-                        mediaQuery.padding.top) *
-                    0.3,
-                child: Chart(_transaction_list)),
-          if (!_isLanscape) txList,
-          if (_isLanscape)
-            _showChart
-                ? Container(
-                    height: (mediaQuery.size.height -
-                        appBar2.preferredSize.height -
-                        mediaQuery.padding.top),
-                    child: Chart(_transaction_list))
-                : txList,
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+          //mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            if (_isLanscape)
+              ..._buildLandscapeContent(mediaQuery, appBar2, txList),
+            if (!_isLanscape)
+              ..._buildPortraitContent(mediaQuery, appBar2, txList),
+          ],
+        ),
       ),
-    ));
+    );
     return Platform.isIOS
         ? CupertinoPageScaffold(
             child: body,
