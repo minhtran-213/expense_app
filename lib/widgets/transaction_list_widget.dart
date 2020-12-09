@@ -1,4 +1,5 @@
 import 'package:expenses_transaction_app/models/transaction.dart';
+import 'package:expenses_transaction_app/widgets/transaction_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
@@ -33,42 +34,9 @@ class TransactionsList extends StatelessWidget {
           )
         : ListView.builder(
             itemBuilder: (ctx, index) {
-              return Card(
-                margin: EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-                child: ListTile(
-                  trailing: MediaQuery.of(context).size.width > 460
-                      ? FlatButton.icon(
-                          icon: Icon(Icons.delete),
-                          label: Text('Delete'),
-                          textColor: Theme.of(context).errorColor,
-                          onPressed: () =>
-                              removeTransactions(transactions[index].id),
-                        )
-                      : IconButton(
-                          icon: Icon(Icons.delete),
-                          color: Theme.of(context).errorColor,
-                          onPressed: () =>
-                              removeTransactions(transactions[index].id),
-                        ),
-                  leading: CircleAvatar(
-                    radius: 30,
-                    child: Padding(
-                      padding: EdgeInsets.all(6),
-                      child: Container(
-                        height: 20,
-                        child: FittedBox(
-                            child: Text("\$${transactions[index].amount}")),
-                      ),
-                    ),
-                  ),
-                  title: Text(
-                    transactions[index].title,
-                    style: Theme.of(context).textTheme.title,
-                  ),
-                  subtitle:
-                      Text(DateFormat.yMMMd().format(transactions[index].date)),
-                ),
-              );
+              return TransactionCard(
+                  removeTransactions: removeTransactions,
+                  transaction: transactions[index]);
             },
             itemCount: transactions.length,
           );
