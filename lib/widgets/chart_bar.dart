@@ -6,9 +6,9 @@ class ChartBar extends StatelessWidget {
   final double spendingPctOfTotal;
 
   ChartBar(this.label, this.spendingAmount, this.spendingPctOfTotal);
-
   @override
   Widget build(BuildContext context) {
+    final curScaleFactor = MediaQuery.of(context).textScaleFactor;
     return LayoutBuilder(
       builder: (ctx, contraints) {
         return Column(
@@ -16,7 +16,10 @@ class ChartBar extends StatelessWidget {
             Container(
               height: contraints.maxHeight * 0.15,
               child: FittedBox(
-                child: Text('\$${spendingAmount.toStringAsFixed(0)}'),
+                child: Text(
+                  '\$${spendingAmount.toStringAsFixed(0)}',
+                  style: TextStyle(fontSize: 2 * curScaleFactor),
+                ),
               ),
             ),
             SizedBox(
